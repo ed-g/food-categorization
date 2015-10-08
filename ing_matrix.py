@@ -16,6 +16,7 @@ for cuisine, ingredients in inglist_by_cui.iteritems():
     for ingredient in ingredients:
         ingfreq_by_cui[cuisine][ingredient] += 1 
 
-for key in ingfreq_by_cui['brazilian']:
-    if ingfreq_by_cui['brazilian'][key] == 1:
-        print key
+for ingredients in ingfreq_by_cui.values():
+    for ingredient in ingredients.keys():
+        if ',' in ingredient:
+            print ingredient
