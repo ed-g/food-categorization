@@ -2,6 +2,7 @@ from collections import defaultdict
 import json
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.preprocessing import normalize
 
 trainfile = open('train1.json')
 train = json.loads(trainfile.read())
@@ -25,6 +26,7 @@ for cuisine, ing_hist in ingfreq_by_cui.iteritems():
 
 vec = DictVectorizer()
 ing_array = vec.fit_transform(ingfreq_list)
+ing_array = normalize(ing_array)
 
 # open test file
 testfile = open('train2.json')
