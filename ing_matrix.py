@@ -44,4 +44,12 @@ for id, ing_list in test['ingredients'].iteritems():
     prediction = cuisine_axis[cui_sim.index(max(cui_sim))]
     predictions.append(prediction)
 
+true_cuisine = [test['cuisine'][id] for id in pred_ids]
+correct_list = [true_cuisine[idx] == predictions[idx] for idx in
+                range(len(predictions))]
+accuracy = sum(correct_list)/float(len(correct_list))
+
+print accuracy
 print predictions[:10]
+print true_cuisine[:10]
+print correct_list[:10]
