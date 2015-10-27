@@ -2,6 +2,7 @@ from collections import defaultdict
 import json
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
 
 trainfile = open('train1.json')
@@ -26,7 +27,8 @@ for cuisine, ing_hist in ingfreq_by_cui.iteritems():
 
 vec = DictVectorizer()
 ing_array = vec.fit_transform(ingfreq_list)
-ing_array = normalize(ing_array)
+ing_array = normalize(ing_array) 
+ing_array = normalize(ing_array, axis=0)
 
 # open test file
 testfile = open('train2.json')
@@ -51,7 +53,15 @@ correct_list = [true_cuisine[idx] == predictions[idx] for idx in
                 range(len(predictions))]
 accuracy = sum(correct_list)/float(len(correct_list))
 
-print accuracy
 print predictions[:10]
 print true_cuisine[:10]
-print correct_list[:10]
+print test['ingredients'][pred_ids[1]]
+
+example_vec = vec.transform([{'sugar': 1}]).transpose()
+example_sim = ing_array.dot(example_vec).todense().tolist()
+
+print cuisine_axis
+print example_sim
+print accuracy
+
+# print confusion_matrix(true_cuisine, predictions)
