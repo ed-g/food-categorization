@@ -5,7 +5,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
 
-trainfile = open('train1.json')
+trainfile = open('data/train1.json')
 train = json.loads(trainfile.read())
 trainfile.close() 
 
@@ -31,7 +31,7 @@ ing_array = normalize(ing_array)
 ing_array = normalize(ing_array, axis=0)
 
 # open test file
-testfile = open('train2.json')
+testfile = open('data/train2.json')
 test = json.loads(testfile.read())
 testfile.close()
 
