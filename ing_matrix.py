@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from collections import defaultdict
 import json
 import numpy as np
@@ -53,15 +54,15 @@ correct_list = [true_cuisine[idx] == predictions[idx] for idx in
                 range(len(predictions))]
 accuracy = sum(correct_list)/float(len(correct_list))
 
-print predictions[:10]
-print true_cuisine[:10]
-print test['ingredients'][pred_ids[1]]
+print (predictions[:10])
+print (true_cuisine[:10])
+print (test['ingredients'][pred_ids[1]])
 
 example_vec = vec.transform([{'sugar': 1}]).transpose()
 example_sim = ing_array.dot(example_vec).todense().tolist()
 
-print cuisine_axis
-print example_sim
-print accuracy
+print (cuisine_axis)
+print (example_sim)
+print (accuracy)
 
 # print confusion_matrix(true_cuisine, predictions)
