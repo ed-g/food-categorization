@@ -11,18 +11,18 @@ train = json.loads(trainfile.read())
 trainfile.close() 
 
 inglist_by_cui = defaultdict(list)
-for id, cuisine in train['cuisine'].iteritems():
+for id, cuisine in train['cuisine'].items():
     inglist_by_cui[cuisine].extend(train['ingredients'][id])
 
 ingfreq_by_cui = {}
-for cuisine, ingredients in inglist_by_cui.iteritems():
+for cuisine, ingredients in inglist_by_cui.items():
     ingfreq_by_cui[cuisine] = defaultdict(int)
     for ingredient in ingredients:
         ingfreq_by_cui[cuisine][ingredient] += 1 
 
 cuisine_axis = []
 ingfreq_list = []
-for cuisine, ing_hist in ingfreq_by_cui.iteritems():
+for cuisine, ing_hist in ingfreq_by_cui.items():
      cuisine_axis.append(cuisine)
      ingfreq_list.append(ing_hist)
 
@@ -39,7 +39,7 @@ testfile.close()
 #make predictions with test data
 pred_ids = []
 predictions = []
-for id, ing_list in test['ingredients'].iteritems():
+for id, ing_list in test['ingredients'].items():
     pred_ids.append(id)
     ingfreq = defaultdict(int)
     for ingredient in ing_list:
