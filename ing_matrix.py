@@ -54,7 +54,6 @@ for id, ing_list in test['ingredients'].items():
         ingfreq[ingredient] += 1
     pred_vec = vec.transform(ingfreq).transpose()
     cui_sim = ing_array.dot(pred_vec).todense().tolist()
-    # prediction = cuisine_axis[ cui_sim.index(max(cui_sim)) ]
     cuisines = list(ingfreq_by_cui.keys())
     predicted_cuisine_index = cui_sim.index(max(cui_sim))
     prediction = cuisines [ predicted_cuisine_index ]
