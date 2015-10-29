@@ -74,7 +74,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['scipy','numpy','scikit-learn'],
+    install_requires=['toolz','scipy','numpy','scikit-learn'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -104,8 +104,8 @@ setup(
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
-        #'console_scripts': [
-        #    'sample=sample:main',
-        #],
+        'console_scripts': [
+            'ing_matrix=ing_matrix:main',
+        ],
     },
 )
