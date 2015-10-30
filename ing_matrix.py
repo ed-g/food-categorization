@@ -27,6 +27,10 @@ for cuisine, ingredients in inglist_by_cui.items():
         ingfreq_by_cui[cuisine][ingredient] += 1 
 
 
+# TODO: divide the ingredient counts by total number of sample recipes for each cuisine, so that
+# we have a [0,1.0] frequency of ingredient use across all recipes for each cuisine.
+
+
 # NOTE: Don't modify ingfreq_by_cui below this line, we want to keep a
 # correspondence between its keys and values as we create a copy of values in
 # DictVectorizer, so if the keys or values are changed we could get confused as
@@ -35,7 +39,7 @@ for cuisine, ingredients in inglist_by_cui.items():
 
 vec = DictVectorizer()
 # ing_array = vec.fit_transform(ingfreq_list)
-ing_array = vec.fit_transform(ingfreq_by_cui.values())
+ing_array = vec.fit_transform( ingfreq_by_cui.values() )
 ing_array = normalize(ing_array) 
 ing_array = normalize(ing_array, axis=0)
 
