@@ -7,12 +7,19 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
 import toolz
 
+#TEST_INPUT_FILE = 'program_test_data/train_has_5_cuisines.json' 
+#assert total_cuisines(get_training_data(TEST_INPUT_FILE)) == 5
+
 TRAIN_INPUT_FILE = 'data/train1.json' 
 TEST_INPUT_FILE  = 'data/train2.json'
 
-trainfile = open(TRAIN_INPUT_FILE)
-train = json.loads(trainfile.read())
-trainfile.close() 
+def get_training_data(json_file_name):
+    trainfile = open(json_file_name)
+    train = json.loads(trainfile.read())
+    trainfile.close() 
+    return train
+
+train = get_training_data(TRAIN_INPUT_FILE)
 
 # inglist_by_cui == ingredient list, by cuisine
 inglist_by_cui = defaultdict(list)
@@ -27,8 +34,9 @@ for cuisine, ingredients in inglist_by_cui.items():
         ingfreq_by_cui[cuisine][ingredient] += 1 
 
 
-# TODO: divide the ingredient counts by total number of sample recipes for each cuisine, so that
-# we have a [0,1.0] frequency of ingredient use across all recipes for each cuisine.
+# TODO: divide the ingredient counts by total number of sample recipes for each
+# cuisine, so that we have a [0,1.0] frequency of ingredient use across all
+# recipes for each cuisine.
 
 
 # NOTE: Don't modify ingfreq_by_cui below this line, we want to keep a
