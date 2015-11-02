@@ -20,7 +20,6 @@ def get_data(json_file_name):
     trainfile.close() 
     return train
 
-train = get_data(TRAIN_INPUT_FILE)
 
 def group_ingredients_by_cuisine(train):
     # inglist_by_cui == ingredient list, by cuisine
@@ -29,7 +28,6 @@ def group_ingredients_by_cuisine(train):
         inglist_by_cui[cuisine].extend(train['ingredients'][id])
     return inglist_by_cui
 
-inglist_by_cui = group_ingredients_by_cuisine(train)
 
 def count_ingredients_in_cuisine(inglist_by_cui):
     # ingfreq_by_cui == ingredient frequency, by cuisine
@@ -40,44 +38,20 @@ def count_ingredients_in_cuisine(inglist_by_cui):
             ingfreq_by_cui[cuisine][ingredient] += 1 
     return ingfreq_by_cui
 
-ingfreq_by_cui = count_ingredients_in_cuisine(inglist_by_cui)
-
-
-# TODO: divide the ingredient counts by total number of sample recipes for each
-# cuisine, so that we have a [0,1.0] frequency of ingredient use across all
-# recipes for each cuisine.
-
-
-# NOTE: Don't modify ingfreq_by_cui below this line, we want to keep a
-# correspondence between its keys and values as we create a copy of values in
-# DictVectorizer, so if the keys or values are changed we could get confused as
-# to which cuisine was being represented by which item in the DictVectorizer.
-# ED 2015-10-29
-
 def create_matrix_and_vectorizer(ingfreq_by_cui):
     vec = DictVectorizer()
     # ing_array = vec.fit_transform(ingfreq_list)
     ing_array = vec.fit_transform( ingfreq_by_cui.values() )
     return ing_array, vec
 
-ing_array, vec = create_matrix_and_vectorizer(ingfreq_by_cui)
 
 def normalize_matrix(ing_array):
     ing_array = normalize(ing_array) 
     ing_array = normalize(ing_array, axis=0)
     return ing_array
 
-ing_array = normalize_matrix(ing_array)
 
-# open test file
-
-test = get_data(TEST_INPUT_FILE)
-
-# testfile = open(TEST_INPUT_FILE)
-# test = json.loads(testfile.read())
-# testfile.close()
-
-def make_predictions(test, vec):
+def make_predictions(test, vec, ing_array, ingfreq_by_cui):
 #make predictions with test data
     pred_ids = []
     predictions = []
@@ -94,7 +68,6 @@ def make_predictions(test, vec):
         predictions.append(prediction)
     return predictions, pred_ids
 
-predictions, pred_ids = make_predictions(test, vec)
 
 def calculate_accuracy(test, predictions, pred_ids):
     true_cuisine = [test['cuisine'][id] for id in pred_ids]
@@ -104,17 +77,53 @@ def calculate_accuracy(test, predictions, pred_ids):
     accuracy = sum(correct_list)/float(len(correct_list))
     return accuracy
 
-accuracy = calculate_accuracy(test, predictions, pred_ids)
 
-print (predictions[:10])
-print (test['ingredients'][pred_ids[1]])
-
-example_vec = vec.transform([{'sugar': 1}]).transpose()
-example_sim = ing_array.dot(example_vec).todense().tolist()
+def main():
+    # TODO: divide the ingredient counts by total number of sample recipes for each
+    # cuisine, so that we have a [0,1.0] frequency of ingredient use across all
+    # recipes for each cuisine.
 
 
-print (list(ingfreq_by_cui.keys()))
-print (example_sim)
-print (accuracy)
+    # NOTE: Don't modify ingfreq_by_cui below this line, we want to keep a
+    # correspondence between its keys and values as we create a copy of values in
+    # DictVectorizer, so if the keys or values are changed we could get confused as
+    # to which cuisine was being represented by which item in the DictVectorizer.
+    # ED 2015-10-29
 
-# print confusion_matrix(true_cuisine, predictions)
+    train = get_data(TRAIN_INPUT_FILE)
+
+    inglist_by_cui = group_ingredients_by_cuisine(train)
+
+    ingfreq_by_cui = count_ingredients_in_cuisine(inglist_by_cui)
+
+    ing_array, vec = create_matrix_and_vectorizer(ingfreq_by_cui)
+
+    ing_array = normalize_matrix(ing_array)
+
+    test = get_data(TEST_INPUT_FILE)
+
+    # open test file
+    # testfile = open(TEST_INPUT_FILE)
+    # test = json.loads(testfile.read())
+    # testfile.close()
+
+    predictions, pred_ids = make_predictions(test, vec, ing_array, ingfreq_by_cui)
+
+    accuracy = calculate_accuracy(test, predictions, pred_ids)
+
+    print (predictions[:10])
+    print (test['ingredients'][pred_ids[1]])
+    
+    example_vec = vec.transform([{'sugar': 1}]).transpose()
+    example_sim = ing_array.dot(example_vec).todense().tolist()
+    
+    
+    print (list(ingfreq_by_cui.keys()))
+    print (example_sim)
+    print (accuracy)
+    
+    # print confusion_matrix(true_cuisine, predictions)
+
+if __name__ == '__main__':
+    main()
+
