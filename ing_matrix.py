@@ -15,53 +15,52 @@ TRAIN_INPUT_FILE = 'data/train1.json'
 TEST_INPUT_FILE  = 'data/train2.json'
 
 def get_data(json_file_name):
-    trainfile = open(json_file_name)
-    train = json.loads(trainfile.read())
-    trainfile.close() 
-    return train
+    datafile = open(json_file_name)
+    data = json.loads(datafile.read())
+    datafile.close() 
+    return data
 
 
-def group_ingredients_by_cuisine(train):
+def group_ingredients_by_cuisine(training_data):
     # inglist_by_cui == ingredient list, by cuisine
     inglist_by_cui = defaultdict(list)
-    for id, cuisine in train['cuisine'].items():
-        inglist_by_cui[cuisine].extend(train['ingredients'][id])
+    for id, cuisine in training_data['cuisine'].items():
+        inglist_by_cui[cuisine].extend(training_data['ingredients'][id])
     return inglist_by_cui
 
 
 def count_ingredients_in_cuisine(inglist_by_cui):
-    # ingfreq_by_cui == ingredient frequency, by cuisine
-    ingfreq_by_cui = {}
+    # ingcounts_by_cui == ingredient frequency, by cuisine
+    ingcounts_by_cui = {}
     for cuisine, ingredients in inglist_by_cui.items():
-        ingfreq_by_cui[cuisine] = defaultdict(int)
+        ingcounts_by_cui[cuisine] = defaultdict(int)
         for ingredient in ingredients:
-            ingfreq_by_cui[cuisine][ingredient] += 1 
-    return ingfreq_by_cui
+            ingcounts_by_cui[cuisine][ingredient] += 1 
+    return ingcounts_by_cui
 
 def create_matrix_and_vectorizer(ingfreq_by_cui):
-    vec = DictVectorizer()
-    # ing_array = vec.fit_transform(ingfreq_list)
-    ing_array = vec.fit_transform( ingfreq_by_cui.values() )
-    return ing_array, vec
+    vectorizer = DictVectorizer()
+    cui_by_ing_matrix = vectorizer.fit_transform( ingfreq_by_cui.values() )
+    return cui_by_ing_matrix, vectorizer
 
 
-def normalize_matrix(ing_array):
-    ing_array = normalize(ing_array) 
-    ing_array = normalize(ing_array, axis=0)
-    return ing_array
+def normalize_matrix(matrix):
+    matrix = normalize(matrix) 
+    matrix = normalize(matrix, axis=0)
+    return matrix
 
 
-def make_predictions(test, vec, ing_array, ingfreq_by_cui):
+def make_predictions(test_data, vectorizer, cui_by_ing_matrix, ingfreq_by_cui):
 #make predictions with test data
     pred_ids = []
     predictions = []
-    for id, ing_list in test['ingredients'].items():
+    for id, ing_list in test_data['ingredients'].items():
         pred_ids.append(id)
         ingfreq = defaultdict(int)
         for ingredient in ing_list:
             ingfreq[ingredient] += 1
-        pred_vec = vec.transform(ingfreq).transpose()
-        cui_sim = ing_array.dot(pred_vec).todense().tolist()
+        pred_vec = vectorizer.transform(ingfreq).transpose()
+        cui_sim = cui_by_ing_matrix.dot(pred_vec).todense().tolist()
         cuisines = list(ingfreq_by_cui.keys())
         predicted_cuisine_index = cui_sim.index(max(cui_sim))
         prediction = cuisines [ predicted_cuisine_index ]
@@ -69,8 +68,8 @@ def make_predictions(test, vec, ing_array, ingfreq_by_cui):
     return predictions, pred_ids
 
 
-def calculate_accuracy(test, predictions, pred_ids):
-    true_cuisine = [test['cuisine'][id] for id in pred_ids]
+def calculate_accuracy(test_data, predictions, pred_ids):
+    true_cuisine = [test_data['cuisine'][id] for id in pred_ids]
     print (true_cuisine[:10])
     correct_list = [true_cuisine[idx] == predictions[idx] for idx in
                     range(len(predictions))]
