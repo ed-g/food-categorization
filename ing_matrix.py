@@ -14,13 +14,13 @@ import toolz
 TRAIN_INPUT_FILE = 'data/train1.json' 
 TEST_INPUT_FILE  = 'data/train2.json'
 
-def get_training_data(json_file_name):
+def get_data(json_file_name):
     trainfile = open(json_file_name)
     train = json.loads(trainfile.read())
     trainfile.close() 
     return train
 
-train = get_training_data(TRAIN_INPUT_FILE)
+train = get_data(TRAIN_INPUT_FILE)
 
 def group_ingredients_by_cuisine(train):
     # inglist_by_cui == ingredient list, by cuisine
@@ -54,10 +54,13 @@ ingfreq_by_cui = count_ingredients_in_cuisine(inglist_by_cui)
 # to which cuisine was being represented by which item in the DictVectorizer.
 # ED 2015-10-29
 
-vec = DictVectorizer()
-# ing_array = vec.fit_transform(ingfreq_list)
-ing_array = vec.fit_transform( ingfreq_by_cui.values() )
+def create_matrix_and_vectorizer(ingfreq_by_cui):
+    vec = DictVectorizer()
+    # ing_array = vec.fit_transform(ingfreq_list)
+    ing_array = vec.fit_transform( ingfreq_by_cui.values() )
+    return ing_array, vec
 
+ing_array, vec = create_matrix_and_vectorizer(ingfreq_by_cui)
 
 def normalize_matrix(ing_array):
     ing_array = normalize(ing_array) 
@@ -67,32 +70,43 @@ def normalize_matrix(ing_array):
 ing_array = normalize_matrix(ing_array)
 
 # open test file
-testfile = open(TEST_INPUT_FILE)
-test = json.loads(testfile.read())
-testfile.close()
 
+test = get_data(TEST_INPUT_FILE)
+
+# testfile = open(TEST_INPUT_FILE)
+# test = json.loads(testfile.read())
+# testfile.close()
+
+def make_predictions(test, vec):
 #make predictions with test data
-pred_ids = []
-predictions = []
-for id, ing_list in test['ingredients'].items():
-    pred_ids.append(id)
-    ingfreq = defaultdict(int)
-    for ingredient in ing_list:
-        ingfreq[ingredient] += 1
-    pred_vec = vec.transform(ingfreq).transpose()
-    cui_sim = ing_array.dot(pred_vec).todense().tolist()
-    cuisines = list(ingfreq_by_cui.keys())
-    predicted_cuisine_index = cui_sim.index(max(cui_sim))
-    prediction = cuisines [ predicted_cuisine_index ]
-    predictions.append(prediction)
+    pred_ids = []
+    predictions = []
+    for id, ing_list in test['ingredients'].items():
+        pred_ids.append(id)
+        ingfreq = defaultdict(int)
+        for ingredient in ing_list:
+            ingfreq[ingredient] += 1
+        pred_vec = vec.transform(ingfreq).transpose()
+        cui_sim = ing_array.dot(pred_vec).todense().tolist()
+        cuisines = list(ingfreq_by_cui.keys())
+        predicted_cuisine_index = cui_sim.index(max(cui_sim))
+        prediction = cuisines [ predicted_cuisine_index ]
+        predictions.append(prediction)
+    return predictions, pred_ids
 
-true_cuisine = [test['cuisine'][id] for id in pred_ids]
-correct_list = [true_cuisine[idx] == predictions[idx] for idx in
-                range(len(predictions))]
-accuracy = sum(correct_list)/float(len(correct_list))
+predictions, pred_ids = make_predictions(test, vec)
+
+def calculate_accuracy(test, predictions, pred_ids):
+    true_cuisine = [test['cuisine'][id] for id in pred_ids]
+    print (true_cuisine[:10])
+    correct_list = [true_cuisine[idx] == predictions[idx] for idx in
+                    range(len(predictions))]
+    accuracy = sum(correct_list)/float(len(correct_list))
+    return accuracy
+
+accuracy = calculate_accuracy(test, predictions, pred_ids)
 
 print (predictions[:10])
-print (true_cuisine[:10])
 print (test['ingredients'][pred_ids[1]])
 
 example_vec = vec.transform([{'sugar': 1}]).transpose()
