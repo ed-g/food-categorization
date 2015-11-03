@@ -2,6 +2,7 @@
 # vim:ts=4:sw=4:expandtab:
 from collections import defaultdict
 import json
+import scipy
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import confusion_matrix
@@ -25,10 +26,16 @@ def test_group_ing_by_cui():
 PRACTICE_INGLISTS = {'a': ['as', 'bs', 'cs', 'bs', 'es', 'bs'], 'c': ['ds', 'es']}
 
 def test_count_ingredients():
-    assert len(count_ingredients_in_cuisine(PRACTICE_INGLIST)['a']['bs']) == 3
-    assert len(count_ingredients_in_cuisine(PRACTICE_INGLIST)['c']['es']) == 1
+    assert count_ingredients_in_cuisine(PRACTICE_INGLISTS)['a']['bs'] == 3
+    assert count_ingredients_in_cuisine(PRACTICE_INGLISTS)['c']['es'] == 1
 
+PRACTICE_INGCOUNTS = {'a': {'as':1, 'bs':3, 'cs':1, 'es':1}, 'c':{'ds':1, 'es':1}}
 
+def test_create_matrix_vec():
+    assert create_matrix_and_vectorizer(PRACTICE_INGCOUNTS)[0].getformat() == 'csr'
+    assert create_matrix_and_vectorizer(PRACTICE_INGCOUNTS)[0].getnnz() == 6
+    assert create_matrix_and_vectorizer(PRACTICE_INGCOUNTS)[0].todense().shape == (2, 5)
+    
 # Test how maps work.
 def test_map():
     numbers = [x for x in range(26)]
@@ -74,4 +81,7 @@ def test_normalize():
     print ("ary = normalize(ary, axis=0)\n", ary.toarray())
 if __name__ == '__main__':
     test_normalize()
+    test_get_data()
     test_group_ing_by_cui()
+    test_count_ingredients()
+    test_create_matrix_vec()
