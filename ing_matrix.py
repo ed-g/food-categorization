@@ -49,21 +49,28 @@ def normalize_matrix(matrix):
     matrix = normalize(matrix, axis=0)
     return matrix
 
+def create_vector(test_ing_list, vectorizer):
+    ingfreq = defaultdict(int)
+    for ingredient in test_ing_list:
+        ingfreq[ingredient] += 1
+    recipe_vec = vectorizer.transform(ingfreq).transpose()
+    return recipe_vec
+
+def predict_cuisine(recipe_vec, cui_by_ing_matrix, cuisines):
+    cui_sim = cui_by_ing_matrix.dot(recipe_vec).todense().tolist()
+    predicted_cuisine_index = cui_sim.index(max(cui_sim))
+    prediction = cuisines [ predicted_cuisine_index ]
+    return prediction
 
 def make_predictions(test_data, vectorizer, cui_by_ing_matrix, ingfreq_by_cui):
 #make predictions with test data
     pred_ids = []
     predictions = []
+    cuisines = list(ingfreq_by_cui.keys())
     for id, ing_list in test_data['ingredients'].items():
         pred_ids.append(id)
-        ingfreq = defaultdict(int)
-        for ingredient in ing_list:
-            ingfreq[ingredient] += 1
-        pred_vec = vectorizer.transform(ingfreq).transpose()
-        cui_sim = cui_by_ing_matrix.dot(pred_vec).todense().tolist()
-        cuisines = list(ingfreq_by_cui.keys())
-        predicted_cuisine_index = cui_sim.index(max(cui_sim))
-        prediction = cuisines [ predicted_cuisine_index ]
+        pred_vec = create_vector(ing_list, vectorizer)
+        prediction = predict_cuisine(pred_vec, cui_by_ing_matrix, cuisines)
         predictions.append(prediction)
     return predictions, pred_ids
 
