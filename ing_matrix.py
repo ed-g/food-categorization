@@ -122,7 +122,6 @@ def main():
     example_vec = vec.transform([{'sugar': 1}]).transpose()
     example_sim = ing_array.dot(example_vec).todense().tolist()
     
-    
     print (list(ingfreq_by_cui.keys()))
     print (example_sim)
     print (accuracy)

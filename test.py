@@ -79,6 +79,7 @@ def test_normalize():
     print ("ary = normalize(ary)\n", ary.toarray())
     ary = normalize(ary, axis=0)
     print ("ary = normalize(ary, axis=0)\n", ary.toarray())
+
 if __name__ == '__main__':
     test_normalize()
     test_get_data()
