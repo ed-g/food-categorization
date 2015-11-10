@@ -89,18 +89,17 @@ def main():
     # cuisine, so that we have a [0,1.0] frequency of ingredient use across all
     # recipes for each cuisine.
 
+    train = get_data(TRAIN_INPUT_FILE)
+
+    inglist_by_cui = group_ingredients_by_cuisine(train)
+
+    ingfreq_by_cui = count_ingredients_in_cuisine(inglist_by_cui)
 
     # NOTE: Don't modify ingfreq_by_cui below this line, we want to keep a
     # correspondence between its keys and values as we create a copy of values in
     # DictVectorizer, so if the keys or values are changed we could get confused as
     # to which cuisine was being represented by which item in the DictVectorizer.
     # ED 2015-10-29
-
-    train = get_data(TRAIN_INPUT_FILE)
-
-    inglist_by_cui = group_ingredients_by_cuisine(train)
-
-    ingfreq_by_cui = count_ingredients_in_cuisine(inglist_by_cui)
 
     ing_array, vec = create_matrix_and_vectorizer(ingfreq_by_cui)
 
