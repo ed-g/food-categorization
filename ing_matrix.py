@@ -63,7 +63,7 @@ def predict_cuisine(recipe_vec, cui_by_ing_matrix, cuisines):
     return prediction
 
 def make_predictions(test_data, vectorizer, cui_by_ing_matrix, ingfreq_by_cui):
-#make predictions with test data
+    # make predictions with test data
     pred_ids = []
     predictions = []
     cuisines = list(ingfreq_by_cui.keys())
