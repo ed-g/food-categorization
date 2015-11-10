@@ -23,7 +23,8 @@ def test_group_ing_by_cui():
     assert len(group_ingredients_by_cuisine(PRACTICE_DATA)['a']) == 6
     assert len(group_ingredients_by_cuisine(PRACTICE_DATA)['c']) == 2
 
-PRACTICE_INGLISTS = {'a': ['as', 'bs', 'cs', 'bs', 'es', 'bs'], 'c': ['ds', 'es']}
+PRACTICE_INGLISTS = {'a': ['as', 'bs', 'cs', 'bs', 'es', 'bs']
+                   , 'c': ['ds', 'es']}
 
 def test_count_ingredients():
     assert count_ingredients_in_cuisine(PRACTICE_INGLISTS)['a']['bs'] == 3
