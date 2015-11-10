@@ -15,9 +15,11 @@ from ing_matrix import *
 def test_get_data():
     assert type(get_data("data/train1.json")) == dict
 
-PRACTICE_DATA = {"cuisine":{1:'a', 2:'c', 3:'a', 4:'a'},
-                 "ingredients":{1:['as', 'bs', 'cs'], 2:['ds', 'es'], 3:['bs', 'es'],
-                                4:['bs']}}
+PRACTICE_DATA = {"cuisine": { 1:'a', 2:'c', 3:'a', 4:'a' },
+                 "ingredients": { 1:['as', 'bs', 'cs']
+                                , 2:['ds', 'es']
+                                , 3:['bs', 'es']
+                                , 4:['bs']}}
 
 def test_group_ing_by_cui():
     assert len(group_ingredients_by_cuisine(PRACTICE_DATA)['a']) == 6
